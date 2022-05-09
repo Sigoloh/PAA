@@ -159,7 +159,7 @@ class Huffman{
     void createTree(){
       while(tam != 1){
         cout<<"Tabela: "<<endl;
-        this->printTable();
+        //this->printTable();
         Node newNode;
 
         newNode.setFreq(this->getNode(0)->getFreq() + this->getNode(1)->getFreq());
@@ -176,17 +176,13 @@ class Huffman{
 
           newNode.setEsq(&this->nodes[0]);
           
-        } else if(this->getNode(0)->getFreq() == this->getNode(1)->getFreq()){
+        } else{
           newNode.setDir(&this->nodes[1]);
 
           newNode.setEsq(&this->nodes[0]);
         }
 
         this->nodes[0] = newNode;
-
-        if(this->nodes[0].getFreq() == 5){
-          this->nodes[0].setLetter('z');
-        }
 
         for(int i = 1; i < tam - 1; i++){
           this->nodes[i] = this->nodes[i+1];
@@ -198,6 +194,7 @@ class Huffman{
 
     void createLetterDictionary(){
       Node* root = getNode(0);
+      cout<<"Letra: "<<root->getEsq()->getFreq()<<endl;
     }
 };
 
