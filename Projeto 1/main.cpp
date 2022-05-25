@@ -1,121 +1,12 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include "./utils/BellmanFord.cpp"
 #define INFINITO 2147483647
 using namespace std;
-
-class Node{
-  class Ligacao{
-      private:
-        Node* vaiPara;
-        int distancia;
-        string vemDe;
-
-      public:
-        Ligacao(Node* node = nullptr, int dis = -1, string vemDe = ""){
-          this->distancia = dis;
-          this->vaiPara = node;
-          this->vemDe = vemDe;
-        }
-
-        string getNameOfDestiny(){
-          return this->vaiPara->getNome();
-        }
-
-        Node* getNode(){
-          return this->vaiPara;
-        }
-
-        string getVemDe(){
-          return this->vemDe;
-        }
-
-        int getDistancia(){
-          return this->distancia;
-        }
-  };
-
-  private:
-    int qtdLigacoes = 0;
-    int qtdPontosDePartida = 0;
-    Ligacao ligacoes[100];  
-    Ligacao pontosDePartida[100];
-    string nome;
-
-  public:
-
-      Node(string name = "."){
-      this->nome = name;
-    }
-
-    void setNome(string nome){
-      this->nome = nome;
-    }
-
-    string getNome(){
-      return this->nome;
-    }
-
-    void addPontoDePartida(Ligacao* lig){
-      this->pontosDePartida[qtdPontosDePartida] = *lig;
-      this->qtdPontosDePartida++;
-    } 
-
-    Ligacao* getPontoDePartida(int position){
-      return &this->pontosDePartida[position];
-    }
-
-    void addConection(Node* node, int distancia){
-      Ligacao *novaLigacao = new Ligacao(node, distancia);
-
-      this->ligacoes[qtdLigacoes] = *novaLigacao;
-
-      Ligacao *pontoDePartida = new Ligacao(this, distancia, this->nome);
-      
-      node->addPontoDePartida(pontoDePartida);
-
-      this->qtdLigacoes++;
-    }
-
-    Ligacao* getConection(int position){
-      if(position >= this->qtdLigacoes){
-          cout<<"Posição não existe"<<endl;
-          return nullptr;
-      }
-      return &this->ligacoes[position];
-    }
-
-    int getQuantidadeDeLigacoes(){
-      return this->qtdLigacoes;
-    }
-
-    int getQuantidadeDePontosDePartida(){
-      return this->qtdPontosDePartida;
-    }
-
-};
-
-void checaLinha(Node** linhaDeProducao, int tamanho){
-  for(int i = 0; i < tamanho; i++){
-      cout<<"É possivel chegar à "<<linhaDeProducao[i]->getNome()<<" pelos caminhos: "<<endl;
-      for(int k = 0; k < linhaDeProducao[i]->getQuantidadeDePontosDePartida(); k++){
-          cout<<linhaDeProducao[i]->getPontoDePartida(k)->getVemDe()<<" - "<<linhaDeProducao[i]->getNome()<<endl;
-      }
-  }
-}
-
-void calculaCaminho(Node* chegada, string* resultado, int &tamanhoCaminhoFinal, map<string, int>tabela, int count = 0){
-  for(int i = 0; i < chegada->getQuantidadeDePontosDePartida(); i++){
-    if(tabela[chegada->getNome()] - tabela[chegada->getPontoDePartida(i)->getVemDe()] == chegada->getPontoDePartida(i)->getDistancia()){
-      resultado[count] = chegada->getPontoDePartida(i)->getVemDe() + " -> " + chegada->getNome();
-      tamanhoCaminhoFinal++;
-      calculaCaminho(chegada->getPontoDePartida(i)->getNode(), resultado, tamanhoCaminhoFinal, tabela, count + 1);
-    }
-  }
-}
-
 int main(){
   int tamanho = 27;
+
 //
 // Cria os nos
 //
@@ -126,7 +17,9 @@ int main(){
   Node *A = new Node("A");
 
   Node *B = new Node("B");
-Node *C = new Node("C");
+
+  Node *C = new Node("C");
+
   Node *D = new Node("D");
 
   Node *E = new Node("E");
@@ -178,158 +71,221 @@ Node *C = new Node("C");
 // Cria as conexões
 //
 
-  // Nó inicial
-  
-    In->addConection(A, 1);
+  string caminho[54] = {
+    "In -> A",
+    "In -> A'",
+    "A -> B",
+    "A -> B'",
+    "B -> C",
+    "B -> C'",
+    "C -> D",
+    "C -> D'",
+    "D -> E",
+    "D -> E'",
+    "E -> F",
+    "E -> F'",
+    "F -> G",
+    "F -> G'",
+    "G -> H",
+    "G -> H'",
+    "H -> I",
+    "I -> Fn",
+    "A'' -> B''",
+    "A'' -> B'",
+    "B'' -> C''",
+    "B'' -> C'",
+    "C'' -> D''",
+    "C'' -> D'",
+    "D'' -> E''",
+    "D'' -> E'",
+    "E'' -> F''",
+    "E'' -> F'",
+    "F'' -> G''",
+    "F'' -> G'",
+    "G'' -> H''",
+    "G'' -> H'",
+    "H'' -> I''",
+    "I'' -> Fn",
+    "B' -> C",
+    "B' -> C'",
+    "B' -> C''",
+    "C' -> D",
+    "C' -> D'",
+    "C' -> D''",
+    "D' -> E",
+    "D' -> E'",
+    "D' -> E''",
+    "E' -> F",
+    "E' -> F'",
+    "E' -> F''",
+    "F' -> G",
+    "F' -> G'",
+    "F' -> G''",
+    "G' -> H",
+    "G' -> H'",
+    "G' -> H''",
+    "H' -> I",
+    "H' -> I''"
+  };
 
-    In->addConection(All, 5);
+  int pesos[54];
+  
+  for(int i = 0; i < 54; i++){
+    cout<<caminho[i]<<endl;
+    cin>>pesos[i];
+  }
+  // Nó inicial
+    
+    In->addConection(A, pesos[0]);
+
+    In->addConection(All, pesos[1]);
 
   // A
     
-    A->addConection(B, 7);
+    A->addConection(B, pesos[2]);
 
-    A->addConection(Bl, 12);
+    A->addConection(Bl, pesos[3]);
 
   // B
     
-    B->addConection(C, 9);
+    B->addConection(C, pesos[4]);
 
-    B->addConection(Cl, 6);
+    B->addConection(Cl, pesos[5]);
 
   // C
     
-    C->addConection(D, 4);
+    C->addConection(D, pesos[6]);
 
-    C->addConection(Dl, 2);
+    C->addConection(Dl, pesos[7]);
 
   // D
 
-    D->addConection(E, 9);
+    D->addConection(E, pesos[8]);
 
-    D->addConection(El, 2);
+    D->addConection(El, pesos[9]);
 
   // E
     
-    E->addConection(F, 5);
+    E->addConection(F, pesos[10]);
 
-    E->addConection(Fl, 4);
+    E->addConection(Fl, pesos[11]);
 
   // F
     
-    F->addConection(G, 1);
+    F->addConection(G, pesos[12]);
 
-    F->addConection(Gl, 8);
+    F->addConection(Gl, pesos[13]);
 
   // G
 
-    G->addConection(H, 4);
+    G->addConection(H, pesos[14]);
 
-    G->addConection(Hl, 2);
+    G->addConection(Hl, pesos[15]);
 
   // H
 
-    H->addConection(I, 1);
+    H->addConection(I, pesos[16]);
 
   // I
 
-    I->addConection(Fn, 11);
+    I->addConection(Fn, pesos[17]);
   // A''
     
-    All->addConection(Bll, 7);
+    All->addConection(Bll, pesos[18]);
 
-    All->addConection(Bl, 12);
+    All->addConection(Bl, pesos[19]);
 
   // B''
     
-    Bll->addConection(Cll, 9);
+    Bll->addConection(Cll, pesos[20]);
 
-    Bll->addConection(Cl, 6);
+    Bll->addConection(Cl, pesos[21]);
 
   // C''
     
-    Cll->addConection(Dll, 4);
+    Cll->addConection(Dll, pesos[22]);
 
-    Cll->addConection(Dl, 2);
+    Cll->addConection(Dl, pesos[23]);
 
   // D''
 
-    Dll->addConection(Ell, 9);
+    Dll->addConection(Ell, pesos[24]);
 
-    Dll->addConection(El, 2);
+    Dll->addConection(El, pesos[25]);
 
   // E''
     
-    Ell->addConection(Fll, 5);
+    Ell->addConection(Fll, pesos[26]);
 
-    Ell->addConection(Fl, 4);
+    Ell->addConection(Fl, pesos[27]);
 
   // F''
     
-    Fll->addConection(Gll, 1);
+    Fll->addConection(Gll, pesos[28]);
 
-    Fll->addConection(Gl, 8);
+    Fll->addConection(Gl, pesos[29]);
 
   // G''
 
-    Gll->addConection(Hll, 4);
+    Gll->addConection(Hll, pesos[30]);
 
-    Gll->addConection(Hl, 2);
+    Gll->addConection(Hl, pesos[31]);
 
   // H''
 
-    Hll->addConection(Ill, 1);
+    Hll->addConection(Ill, pesos[32]);
 
   // I''
 
-    Ill->addConection(Fn, 11);
+    Ill->addConection(Fn, pesos[33]);
 
   // B'
 
-    Bl->addConection(C, 1);
+    Bl->addConection(C, pesos[34]);
 
-    Bl->addConection(Cl, 5);
+    Bl->addConection(Cl, pesos[35]);
 
-    Bl->addConection(Cll, 3);
+    Bl->addConection(Cll, pesos[36]);
 
   // C'
-    Cl->addConection(D, 1);
+    Cl->addConection(D, pesos[37]);
 
-    Cl->addConection(Dl, 5);
+    Cl->addConection(Dl, pesos[38]);
 
-    Cl->addConection(Dll, 3);
+    Cl->addConection(Dll, pesos[39]);
 
   // D'
-    Dl->addConection(E, 1);
+    Dl->addConection(E, pesos[40]);
 
-    Dl->addConection(El, 5);
+    Dl->addConection(El, pesos[41]);
 
-    Dl->addConection(Ell, 3);
+    Dl->addConection(Ell, pesos[42]);
 
   // E'
-    El->addConection(F, 1);
+    El->addConection(F, pesos[43]);
 
-    El->addConection(Fl, 5);
+    El->addConection(Fl, pesos[44]);
 
-    El->addConection(Fll, 3);
+    El->addConection(Fll, pesos[45]);
 
   // F'
-    Fl->addConection(G, 1);
+    Fl->addConection(G, pesos[46]);
 
-    Fl->addConection(Gl, 5);
+    Fl->addConection(Gl, pesos[47]);
 
-    Fl->addConection(Gll, 3);
+    Fl->addConection(Gll, pesos[48]);
 
   // G'
-    Gl->addConection(H, 1);
+    Gl->addConection(H, pesos[49]);
 
-    Gl->addConection(Hl, 5);
+    Gl->addConection(Hl, pesos[50]);
 
-    Gl->addConection(Hll, 3);
+    Gl->addConection(Hll, pesos[51]);
 
   // H'
-    Gl->addConection(I, 1);
+    Hl->addConection(I, pesos[52]);
 
-    Gl->addConection(Ill, 3);
+    Hl->addConection(Ill, pesos[53]);
 
 //
 // Preenchendo o vetor da linha de produção
@@ -385,25 +341,12 @@ Node *C = new Node("C");
     {"Fn", INFINITO},
   };
 
-//
-// Faz o calculo da menor distância para todos os nós
-//
-
-  for(int i = 0; i < tamanho; i++){
+  for(int i = 0; i < 26; i++){
     for(int k = 0; k < linhaDeProducao[i]->getQuantidadeDeLigacoes(); k++){
-      Node* nodoVisitado = linhaDeProducao[i];
-      if(i == 0){
-        tabelaDeDistancias["A"] = nodoVisitado->getConection(0)->getDistancia();
-        tabelaDeDistancias["A''"] = nodoVisitado->getConection(1)->getDistancia();
-      }else{
-        if(tabelaDeDistancias[nodoVisitado->getNome()] + nodoVisitado->getConection(k)->getDistancia() < tabelaDeDistancias[nodoVisitado->getConection(k)->getNameOfDestiny()]){
-          tabelaDeDistancias[nodoVisitado->getConection(k)->getNameOfDestiny()] = 
-            tabelaDeDistancias[nodoVisitado->getNome()] + nodoVisitado->getConection(k)->getDistancia();
-        }
-      }
+      cout<<linhaDeProducao[i]->getNome()<<" -> "<<linhaDeProducao[i]->getConection(k)->getNameOfDestiny()<<" = "<<linhaDeProducao[i]->getConection(k)->getDistancia()<<endl;
     }
-  }
-
+  };
+// Faz o calculo da menor distância para todos os nós for(int i = 0; i < tamanho; i++){ for(int k = 0; k < linhaDeProducao[i]->getQuantidadeDeLigacoes(); k++){ Node* nodoVisitado = linhaDeProducao[i]; if(i == 0){ tabelaDeDistancias["A"] = nodoVisitado->getConection(0)->getDistancia(); tabelaDeDistancias["A''"] = nodoVisitado->getConection(1)->getDistancia(); }else{ if(tabelaDeDistancias[nodoVisitado->getNome()] + nodoVisitado->getConection(k)->getDistancia() < tabelaDeDistancias[nodoVisitado->getConection(k)->getNameOfDestiny()]){ tabelaDeDistancias[nodoVisitado->getConection(k)->getNameOfDestiny()] = tabelaDeDistancias[nodoVisitado->getNome()] + nodoVisitado->getConection(k)->getDistancia(); } } } }
 //
 // Imprime a tabela de distancia final
 //
@@ -412,16 +355,8 @@ Node *C = new Node("C");
 //      cout<<it->first<<" : "<<it->second<<endl;
 //  }
 
-//
-// Calcula o melhor caminho com base na tabela de distancias
-//
-  
-  string resultado[20];
-  int tamanhoCaminhoFinal = 0;
-  calculaCaminho(linhaDeProducao[26], resultado, tamanhoCaminhoFinal, tabelaDeDistancias);
+  BellmanFord* bellmanFord = new BellmanFord(linhaDeProducao, tabelaDeDistancias, 27);
 
-  for(int i = tamanhoCaminhoFinal; i >= 0; i--){
-    cout<<resultado[i]<<endl;
-  }
+  bellmanFord->showFastestPath();
   return 0;
 }
