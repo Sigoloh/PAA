@@ -2,7 +2,22 @@
 #include <string>
 using namespace std;
 
+/*
+ *
+ *
+ * Essa classe é representa os nós do grafo, no caso estudado,
+ * as operações dentro de cada linha de montagem.
+ *
+ */
+
 class Node{
+  /*
+   *
+   *
+   * A classe auxiliar ligação representa a ligação entre os nós do grafo
+   *
+   *
+   */
   class Ligacao{
       private:
         Node* vaiPara;
@@ -44,10 +59,6 @@ class Node{
 
       Node(string name = "."){
       this->nome = name;
-    }
-
-    void setNome(string nome){
-      this->nome = nome;
     }
 
     string getNome(){

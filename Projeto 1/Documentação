@@ -1,0 +1,32 @@
+Classe Node:
+A classe Node é a classe que representa as etapas da linha de produção. Para representar as ligações, foi usada uma classe auxiliar chamada Ligacao. Os atributos e métodos dessa classe auxiliar seguem:
+Atributos:
+   - Node* vaiPara: Recebe um ponteiro que aponta para o nodo.
+   - int distância: Recebe um número inteiro que significa, no caso, o tempo gasto para uma peça sair do processo A para o processo B.
+   - string vemDe: Recebe uma string que guarda o nome da origem da ligação.
+
+Métodos:
+  - Ligacao(Node* node = nullptr, int dis = -1, string vemDe = "): O construtor da função recebe todos o nodo destino da ligação, a distancia dessa ligação e o nome do nó origem.
+  - string getNameOfDestiny(): retorna o nome do destino da ligação
+  - Node* getNode(): retorna o ponteiro que aponta para o nó destino da ligação
+  - string getVemDe(): retorna o nome da origem da ligação
+  - int getDistancia(): retorna a distancia (peso/tempo) da ligação
+
+A classe Node tem os atributos e metodos a seguir:
+Atributos:
+  - int qtdLigacoes: quantidade de ligações que o nodo FAZ
+  - int qtdPontosDePartida: quantidade de ligações que CHEGAM no nodo
+  - Ligacao ligacoes[100]: vetor que armazena as ligações que o nodo FAZ
+  - Ligacao pontosDePartida[100]: vetor que armazena as ligações que CHEGAM no nodo
+  - string nome: nome do nodo
+
+Métodos:
+  - Node(string name="."): Construtor do nó que o inicia com seu nome, apenas
+  - string getNome(): retorna o nome do nodo
+  - void addPontoDePartida(Ligacao* lig): adiciona uma ligação que CHEGA ao nodo "this" à this.pontosDePartida e incrementa 1 a quantidade de pontos de partida
+  - Ligacao* getPontoDePartida(int position): retorna o ponteiro que aponta para o nodo na posicao "position" de this.pontosDePartida
+ - void addConection(Node* node, int distancia): cria uma ligação com o "node" como DESTINO e "this" como a CHEGADA da ligação
+ - Ligacao* getConection(int position): retorna o ponteiro que aponta para o nodo de CHEGADA de this->ligacoes[position]
+ - int getQuantidadeDeLigacoes(): retorna o this->qtdLigacoes
+ - int getQuantidadeDePontosDePartida(): retorna o this->qtdPontosDePartida
+

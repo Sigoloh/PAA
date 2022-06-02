@@ -10,7 +10,14 @@ int main(){
 //
 // Cria os nos
 //
-
+  /*
+   *
+   * Para facilitar na resolução do problema,
+   * optamos por mudar os nomes nas etapas de
+   * produção de números para letras, dessa forma
+   * tempos A, B, C, ... , G, H, I; B', ... H', e afins
+   *
+   */
   //Nó inicial
   Node *In = new Node("In");
 
@@ -71,6 +78,8 @@ int main(){
 // Cria as conexões
 //
 
+  // Essa string serve apenas para que a inserção das distancias
+  // fique mais autoexplicativa
   string caminho[54] = {
     "In -> A",
     "In -> A'",
@@ -129,13 +138,15 @@ int main(){
   };
 
   int pesos[54];
-  
+  //Esse for insere cada distancia em uma elemento do vetor pesos[] 
   for(int i = 0; i < 54; i++){
     cout<<caminho[i]<<endl;
     cin>>pesos[i];
   }
   // Nó inicial
     
+  //Aqui, com o uso do addConection, cada posição de pesos[], é atribuida
+  //a uma ligação
     In->addConection(A, pesos[0]);
 
     In->addConection(All, pesos[1]);
@@ -309,7 +320,7 @@ int main(){
   
 //  checaLinha(linhaDeProducao, tamanho);
 
-// Cria o vetor de distâncias mínimas com tudo setado para infinito,
+// Cria a tabela hash de distâncias mínimas com tudo setado para infinito,
 
   map<string, int> tabelaDeDistancias {
     {"In", 0},
@@ -347,13 +358,6 @@ int main(){
     }
   };
 // Faz o calculo da menor distância para todos os nós for(int i = 0; i < tamanho; i++){ for(int k = 0; k < linhaDeProducao[i]->getQuantidadeDeLigacoes(); k++){ Node* nodoVisitado = linhaDeProducao[i]; if(i == 0){ tabelaDeDistancias["A"] = nodoVisitado->getConection(0)->getDistancia(); tabelaDeDistancias["A''"] = nodoVisitado->getConection(1)->getDistancia(); }else{ if(tabelaDeDistancias[nodoVisitado->getNome()] + nodoVisitado->getConection(k)->getDistancia() < tabelaDeDistancias[nodoVisitado->getConection(k)->getNameOfDestiny()]){ tabelaDeDistancias[nodoVisitado->getConection(k)->getNameOfDestiny()] = tabelaDeDistancias[nodoVisitado->getNome()] + nodoVisitado->getConection(k)->getDistancia(); } } } }
-//
-// Imprime a tabela de distancia final
-//
-
-//  for(auto it = tabelaDeDistancias.begin(); it != tabelaDeDistancias.end(); it++){
-//      cout<<it->first<<" : "<<it->second<<endl;
-//  }
 
   BellmanFord* bellmanFord = new BellmanFord(linhaDeProducao, tabelaDeDistancias, 27);
 
